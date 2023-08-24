@@ -13,8 +13,6 @@ def get_data(country, state, date, month, year):
             "error": "Country/state not found"
         }
     data = requests.get(f"https://phasesmoon.com/{country}/{state}/moonday{date}{month}{year}.html").text
-    with open("temp.html", "w", encoding="utf-8") as f:
-        f.write(data)
     soup = BeautifulSoup(data, 'html.parser')
 
     moon_phase = soup.select_one("body > div.container > div.row.headerdetails > div:nth-child(1) > ul > li.phasename > strong").string
@@ -44,3 +42,27 @@ def get_data(country, state, date, month, year):
     }
 
 # print(get_data("india", "new-delhi", "22", "october", "2023"))
+
+app = Flask(__name__)
+
+@app.route("/moon")
+def moon():
+    data = request.args
+    for i in ["country", "state", "date", "month", "year"]:
+        if i not in dict(data):
+            return jsonify({"error": "not enough arguments"})
+    return jsonify(get_data(data["country"], data["state"], data["date"], data["month"], data["year"]))
+
+@app.route("/moon-today")
+def moon_today():
+    data = request.args
+    for i in ["country", "state"]:
+        if i not in dict(data):
+            return jsonify({"error": "not enough arguments"})
+    date, month, year = datetime.now().strftime("%d %B %Y").split(" ")
+    print(date, month, year)
+    return jsonify(get_data(data["country"], data["state"], int(date), month, year))
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
