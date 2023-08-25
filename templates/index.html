@@ -39,6 +39,12 @@
                     {% endfor %}
                 </select>
             </div>
+            <button type="button" class="btn btn-success mt-4" onclick="get_data()">Get!</button>
+            <div class="data">
+                <img class="mt-5 mb-5" src="..." alt="..." id="moon-img">
+                <h5 id="date-el"></h5>
+                <p id="info-el"></p>
+            </div>
         </center>
     </div>
     <script>
@@ -57,6 +63,39 @@
                     state.appendChild(option);
             }
         });
+
+        async function get_data() {
+            let img_el = document.getElementById('moon-img');
+            let date_el = document.getElementById('date-el');
+            let info_el = document.getElementById('info-el');
+            let country = Object.keys(JSON.parse(document.getElementById('country').value.replace(/'/g, '"')))[0];
+            let state = document.getElementById('state').value;
+            let dateinp = document.getElementById('date').value;
+            let date = new Date(dateinp);
+            var monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ]
+            console.log(`/moon?country=${country}&state=${state}&date=${date.getDate()}&month=${monthNames[date.getMonth()]}&year=${date.getFullYear()}`)
+            $.get(`/moon?country=${country}&state=${state}&date=${date.getDate()}&month=${monthNames[date.getMonth()]}&year=${date.getFullYear()}`, function(data, status){
+                console.log(data)
+                img_el.setAttribute("src", data['img'])
+                date_el.innerHTML = `${country}, ${state} (${date.getDate()}-${date.getMonth()}-${date.getFullYear()})`
+                info_el.innerHTML = `
+                <b>Phase</b>: ${data['phase']}<br>
+                <b>Rise</b>: ${data['rise']}<br>
+                <b>Set</b>: ${data['set']}<br>
+                <b>Duration</b>: ${data['duration']}<br>
+                <b>Visibility</b>: ${data['visibility']}<br>
+                <b>Constellation</b>: ${data['constellation']}<br>
+                <b>Horoscope</b>: ${data['horoscope']}<br>
+                <b>Age</b>: ${data['age']}<br>
+                <b>Angle</b>: ${data['angle']}<br>
+                <b>Distance</b>: ${data['distance']}<br>
+                `
+            });
+        }
+        get_data()
     </script>
 </body>
 </html>

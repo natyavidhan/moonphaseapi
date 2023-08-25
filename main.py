@@ -14,7 +14,7 @@ def get_data(country, state, date, month, year):
         }
     data = requests.get(f"https://phasesmoon.com/{country}/{state}/moonday{date}{month}{year}.html").text
     soup = BeautifulSoup(data, 'html.parser')
-
+    print(f"https://phasesmoon.com/{country}/{state}/moonday{date}{month}{year}.html")
     moon_phase = soup.select_one("body > div.container > div.row.headerdetails > div:nth-child(1) > ul > li.phasename > strong").string
     moon_rise = soup.select_one("body > div.container > div.row.headerdetails > div:nth-child(1) > ul > li:nth-child(2)").string.replace("Moonrise today: ", "")
     moon_set = soup.select_one("body > div.container > div.row.headerdetails > div:nth-child(1) > ul > li:nth-child(3)").string.replace("Moon set today: ", "")
@@ -55,7 +55,7 @@ def moon():
     for i in ["country", "state", "date", "month", "year"]:
         if i not in dict(data):
             return jsonify({"error": "not enough arguments"})
-    return jsonify(get_data(data["country"], data["state"], data["date"], data["month"], data["year"]))
+    return jsonify(get_data(data["country"], data["state"], data["date"].zfill(2), data["month"], data["year"]))
 
 @app.route("/moon-today")
 def moon_today():
@@ -65,7 +65,7 @@ def moon_today():
             return jsonify({"error": "not enough arguments"})
     date, month, year = datetime.now().strftime("%d %B %Y").split(" ")
     print(date, month, year)
-    return jsonify(get_data(data["country"], data["state"], int(date), month, year))
+    return jsonify(get_data(data["country"], data["state"], date.zfill(2), month, year))
 
 
 if __name__ == "__main__":
