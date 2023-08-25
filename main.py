@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import json
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -44,6 +44,10 @@ def get_data(country, state, date, month, year):
 # print(get_data("india", "new-delhi", "22", "october", "2023"))
 
 app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template("index.html", data=countries, _c=[i for i in countries])
 
 @app.route("/moon")
 def moon():

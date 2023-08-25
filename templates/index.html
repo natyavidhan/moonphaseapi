@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoonPhaseAPI</title>
+    <link rel="stylesheet" href="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+        body {
+            background-color: rgb(24, 24, 24);
+            font-family: 'Ubuntu', sans-serif;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <center>
+            <h1>MoonPhaseAPI</h1>
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date">
+            <div class="countries mt-4">
+                <label for="country">country: </label>
+                <select name="country" id="country">
+                    {% for c in data %}
+                        <option value='{ "{{c}}": {{data[c]}} }'>{{c}}</option>
+                    {% endfor %}
+                </select>
+                <label for="state">state: </label>
+                <select name="state" id="state">
+                    {{data.keys()}}
+                    {% for s in data[_c[0]] %}
+                        <option value="{{s}}">{{s}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </center>
+    </div>
+    <script>
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        var country = document.getElementById('country');
+        var state = document.getElementById('state');
+        country.addEventListener('change', function() {
+            state.innerHTML = ""
+            var c = country.value
+            var valid_c = c.replace(/'/g, '"');
+            var states = JSON.parse(valid_c);
+            for (var key in Object.values(states)[0]) {
+                    var option = document.createElement('option');
+                    option.value = Object.values(states)[0][key];
+                    option.text = Object.values(states)[0][key];
+                    state.appendChild(option);
+            }
+        });
+    </script>
+</body>
+</html>
